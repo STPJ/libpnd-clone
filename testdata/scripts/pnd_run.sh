@@ -585,6 +585,7 @@ main() {
 			PND_EndTask
 		fi
 		oPWD=$(pwd)
+		old_fb0_geometry=$(fbset -fb /dev/fb0 -s | grep geometry | awk '{print $2, $3, $4, $5, $6}')
 		if [ -e "${APPDATADIR}/PND_pre_script.sh" ]; then
 			PND_BeginTask "Starting user configured pre-script"
 			. ${APPDATADIR}/PND_pre_script.sh # Sourcing so it can shared vars with post-script ;)
@@ -609,11 +610,12 @@ main() {
 			PND_resetCPUSpeed
 			PND_EndTask
 		fi
+		PND_BeginTask "Restoring the frame buffer status"
+		fbset -fb /dev/fb0 -g $old_fb0_geometry
 		if ! lsof /dev/fb1 > /dev/null; then
-			PND_BeginTask "Restoring the frame buffer status"
 			ofbset -fb /dev/fb1 -mem 0 -size 0 0 -en 0
-			PND_EndTask
 		fi
+		PND_EndTask
 		PND_BeginTask "uMount the PND"
 		umountUnion
 		PND_EndTask
