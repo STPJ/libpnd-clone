@@ -536,9 +536,11 @@ runApp() {
 	        export XDG_DATA_DIRS="$UNION_MOUNT_DIR/$PND_NAME/share:$XDG_DATA_DIRS:/usr/share"
 	fi
 
-	export XDG_CONFIG_HOME="$UNION_MOUNT_DIR/$PND_NAME"
 	export REAL_HOME="$HOME"
 	export HOME="$UNION_MOUNT_DIR/$PND_NAME"
+	export XDG_CONFIG_HOME="$HOME"
+	export XDG_DATA_HOME="$HOME"
+	export XDG_CACHE_HOME="$HOME"
 
 	if echo "$EXENAME"|grep -q ^\.\/;then
 		"$EXENAME" $ARGUMENTS
