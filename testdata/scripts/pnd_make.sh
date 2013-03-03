@@ -64,6 +64,10 @@ Switches:
                             squashfs. If this parameter is selected, a compressed pnd
                             will be created.
 
+  --compress-squashfs-xz    Define whether or not the pnd should be compressed using
+    / -cx                   squashfs with xz compression. Note that older firmwares
+                            will be unable to start such .pnd files.
+
   --directory / -d          Sets the folder that is to be used for the resulting pnd
                             to <folder>. This option is mandatory for the script to
                             function correctly.
@@ -106,6 +110,11 @@ while [ "${1}" != "" ]; do
 	then
 		SQUASH=1
 		shift 1
+	elif [ "${1}" = "--compress-squashfs-xz" ] || [ "${1}" = "-cx" ];
+	then
+		SQUASH=1
+		SQUASHXZ=1
+		shift 1
 	elif [ "${1}" = "--directory" ] || [ "${1}" = "-d" ];
 	then
 		FOLDER=$2
@@ -130,7 +139,7 @@ while [ "${1}" != "" ]; do
 	then
 		PXML=$2
 		shift 2
-	elif [ "${1}" = "--schema" ] || [ "${1}" = "-f" ]
+	elif [ "${1}" = "--schema" ] || [ "${1}" = "-s" ]
 	then
 		PXML_schema=$2
 		shift 2
@@ -272,7 +281,12 @@ then
 		cecho "ERROR: Your squashfs version is older then version 4, please upgrade to 4.0 or later" $red
 		exit 1
 	fi
-	mksquashfs $FOLDER $PNDNAME.iso # -nopad -no-recovery
+	if [ $SQUASHXZ ];
+	then
+		mksquashfs $FOLDER $PNDNAME.iso -comp xz -Xbcj arm,armthumb
+	else
+		mksquashfs $FOLDER $PNDNAME.iso
+	fi
 else
 	check_for_tool mkisofs
 	mkisofs -o $PNDNAME.iso -R $FOLDER
