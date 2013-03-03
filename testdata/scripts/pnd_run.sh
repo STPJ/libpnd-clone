@@ -614,6 +614,8 @@ main() {
 		fi
 		PND_BeginTask "Restoring the frame buffer status"
 		fbset -fb /dev/fb0 -g $old_fb0_geometry
+		old_res=$(echo $old_fb0_geometry | awk '{print $1, $2}')
+		ofbset -fb /dev/fb0 -pos 0 0 -size $old_res -en 1
 		if ! lsof /dev/fb1 > /dev/null; then
 			ofbset -fb /dev/fb1 -mem 0 -size 0 0 -en 0
 		fi
