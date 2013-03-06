@@ -411,6 +411,7 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
     }
 
     //All file associations:
+#if 1
     //Step into the associations node
     if ( (pElem = hRoot.FirstChild(PND_PXML_NODENAME_ASSOCS).Element()) )
     {
@@ -421,13 +422,15 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
       {
 	char *name = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCNAME);
 	char *filetype = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCFTYPE);
-	char *paramter = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCARGS);
+	//char *paramter = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCARGS);
 
-	if (!(name && filetype && paramter))
+	//pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML - parse (%p %p)\n", name, filetype/*, paramter */ );
+
+	if (!(name && filetype /* && paramter*/ ))
        {
          if(name)     free(name);
          if(filetype) free(filetype);
-         if(paramter) free(paramter);
+         //if(paramter) free(paramter);
          continue;
        }
 
@@ -435,30 +438,34 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
 	{
 	case 0:
 	{
-	  app->associationitem1_name      = name;
-	  app->associationitem1_filetype  = filetype;
-	  app->associationitem1_parameter = paramter;
+	  app->associationitem1_name      = strdup ( name );
+	  app->associationitem1_filetype  = strdup ( filetype );
+	  //app->associationitem1_parameter = paramter;
+	  pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML (%d-0)\n", i );
 	  break;
 	}
 	case 1:
 	{
-	  app->associationitem2_name      = name;
-	  app->associationitem2_filetype  = filetype;
-	  app->associationitem2_parameter = paramter;
+	  app->associationitem2_name      = strdup ( name );
+	  app->associationitem2_filetype  = strdup ( filetype );
+	  //app->associationitem2_parameter = paramter;
+	  pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML (%d-1)\n", i );
 	  break;
 	}
 	case 2:
 	{
-	  app->associationitem3_name      = name;
-	  app->associationitem3_filetype  = filetype;
-	  app->associationitem3_parameter = paramter;
+	  app->associationitem3_name      = strdup ( name );
+	  app->associationitem3_filetype  = strdup ( filetype );
+	  //app->associationitem3_parameter = paramter;
+	  pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML (%d-2)\n", i );
 	}
 	}
        if(name)     free(name);
        if(filetype) free(filetype);
-       if(paramter) free(paramter);
+       //if(paramter) free(paramter);
       }
     }
+#endif
 
     //Performance related things (aka: Clockspeed XD):
     pElem = hRoot.FirstChild(PND_PXML_ENAME_CLOCK).Element();

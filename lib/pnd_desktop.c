@@ -122,7 +122,9 @@ unsigned char pnd_emit_dotdesktop ( char *targetpath, char *pndrun, pnd_disco_t 
     fprintf ( f, "X-Pandora-Info-Name=%s\n", p -> info_name );
   }
 
+#if 1
   if ( p -> associationitem1_name || p -> associationitem2_name || p -> associationitem3_name ) {
+    pnd_log ( PND_LOG_DEFAULT, "  EmitDesktop: Found file association request in PXML (%s)\n", p -> title_en );
     fprintf ( f, "MimeType=" );
     if ( p -> associationitem1_name ) {
       fprintf ( f, "%s;", p -> associationitem1_filetype );
@@ -138,6 +140,7 @@ unsigned char pnd_emit_dotdesktop ( char *targetpath, char *pndrun, pnd_disco_t 
     }
     fprintf ( f, "\n" );
   }
+#endif
 
 #if 0 // we let pnd_run.sh command line handle this instead of in .desktop
   if ( p -> startdir ) {

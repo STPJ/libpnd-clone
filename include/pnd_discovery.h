@@ -93,13 +93,13 @@ typedef struct {
   // existing above, lets just copy from pxml and use a list of [123] members..
   char *associationitem1_name;
   char *associationitem1_filetype;
-  char *associationitem1_parameter;
+  char *associationitem1_parameter; // placeholder
   char *associationitem2_name;
   char *associationitem2_filetype;
-  char *associationitem2_parameter;
+  char *associationitem2_parameter; // placeholder
   char *associationitem3_name;
   char *associationitem3_filetype;
-  char *associationitem3_parameter;
+  char *associationitem3_parameter; // placeholder
 } pnd_disco_t;
 
 void pnd_disco_destroy ( pnd_disco_t *p ); // a function name that simply could not be avoided

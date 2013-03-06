@@ -61,6 +61,13 @@ void pnd_disco_destroy ( pnd_disco_t *p ) {
   if ( p -> package_version_minor ) { free ( p -> package_version_minor ); }
   if ( p -> package_version_release ) { free ( p -> package_version_release ); }
   if ( p -> package_version_build ) { free ( p -> package_version_build ); }
+  if ( p -> associationitem1_name ) { free ( p -> associationitem1_name ); }
+  if ( p -> associationitem1_filetype ) { free ( p -> associationitem1_filetype ); }
+  if ( p -> associationitem2_name ) { free ( p -> associationitem2_name ); }
+  if ( p -> associationitem2_filetype ) { free ( p -> associationitem2_filetype ); }
+  if ( p -> associationitem3_name ) { free ( p -> associationitem3_name ); }
+  if ( p -> associationitem3_filetype ) { free ( p -> associationitem3_filetype ); }
+
   return;
 }
 
@@ -335,22 +342,25 @@ static int pnd_disco_callback ( const char *fpath, const struct stat *sb,
       if ( pnd_pxml_get_package_version_build ( pxmlh ) ) {
    p -> package_version_build = strdup ( pnd_pxml_get_package_version_build ( pxmlh ) );
       }
+#if 1
       // file associations
       if ( pnd_pxml_get_associationitem1_name ( pxmlh ) ) {
-	p -> associationitem1_name = pnd_pxml_get_associationitem1_name ( pxmlh );
-	p -> associationitem1_filetype = pnd_pxml_get_associationitem1_filetype ( pxmlh );
-	p -> associationitem1_parameter = pnd_pxml_get_associationitem1_parameter ( pxmlh );
+	p -> associationitem1_name = strdup ( pnd_pxml_get_associationitem1_name ( pxmlh ) );
+	p -> associationitem1_filetype = strdup ( pnd_pxml_get_associationitem1_filetype ( pxmlh ) );
+	//p -> associationitem1_parameter = strdup ( pnd_pxml_get_associationitem1_parameter ( pxmlh ) );
+	pnd_log ( PND_LOG_DEFAULT, "  Disco: Found file association request in PXML (%s)\n", p -> title_en );
       }
       if ( pnd_pxml_get_associationitem2_name ( pxmlh ) ) {
-	p -> associationitem2_name = pnd_pxml_get_associationitem2_name ( pxmlh );
-	p -> associationitem2_filetype = pnd_pxml_get_associationitem2_filetype ( pxmlh );
-	p -> associationitem2_parameter = pnd_pxml_get_associationitem2_parameter ( pxmlh );
+	p -> associationitem2_name = strdup ( pnd_pxml_get_associationitem2_name ( pxmlh ) );
+	p -> associationitem2_filetype = strdup ( pnd_pxml_get_associationitem2_filetype ( pxmlh ) );
+	//p -> associationitem2_parameter = strdup ( pnd_pxml_get_associationitem2_parameter ( pxmlh ) );
       }
       if ( pnd_pxml_get_associationitem3_name ( pxmlh ) ) {
-	p -> associationitem3_name = pnd_pxml_get_associationitem3_name ( pxmlh );
-	p -> associationitem3_filetype = pnd_pxml_get_associationitem3_filetype ( pxmlh );
-	p -> associationitem3_parameter = pnd_pxml_get_associationitem3_parameter ( pxmlh );
+	p -> associationitem3_name = strdup ( pnd_pxml_get_associationitem3_name ( pxmlh ) );
+	p -> associationitem3_filetype = strdup ( pnd_pxml_get_associationitem3_filetype ( pxmlh ) );
+	//p -> associationitem3_parameter = strdup ( pnd_pxml_get_associationitem3_parameter ( pxmlh ) );
       }
+#endif
 
       // look for any PXML overrides, if requested
       if ( disco_overrides ) {
