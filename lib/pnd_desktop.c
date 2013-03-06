@@ -122,6 +122,23 @@ unsigned char pnd_emit_dotdesktop ( char *targetpath, char *pndrun, pnd_disco_t 
     fprintf ( f, "X-Pandora-Info-Name=%s\n", p -> info_name );
   }
 
+  if ( p -> associationitem1_name || p -> associationitem2_name || p -> associationitem3_name ) {
+    fprintf ( f, "MimeType=" );
+    if ( p -> associationitem1_name ) {
+      fprintf ( f, "%s;", p -> associationitem1_filetype );
+      pnd_log ( PND_LOG_DEFAULT, "App %s is handling mimetype %s [1]\n", p -> title_en, p -> associationitem1_filetype );
+    }
+    if ( p -> associationitem2_name ) {
+      fprintf ( f, "%s;", p -> associationitem2_filetype );
+      pnd_log ( PND_LOG_DEFAULT, "App %s is handling mimetype %s [2]\n", p -> title_en, p -> associationitem2_filetype );
+    }
+    if ( p -> associationitem3_name ) {
+      fprintf ( f, "%s;", p -> associationitem3_filetype );
+      pnd_log ( PND_LOG_DEFAULT, "App %s is handling mimetype %s [3]\n", p -> title_en, p -> associationitem3_filetype );
+    }
+    fprintf ( f, "\n" );
+  }
+
 #if 0 // we let pnd_run.sh command line handle this instead of in .desktop
   if ( p -> startdir ) {
     snprintf ( buffer, 1020, "Path=%s\n", p -> startdir );

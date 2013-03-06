@@ -335,6 +335,22 @@ static int pnd_disco_callback ( const char *fpath, const struct stat *sb,
       if ( pnd_pxml_get_package_version_build ( pxmlh ) ) {
    p -> package_version_build = strdup ( pnd_pxml_get_package_version_build ( pxmlh ) );
       }
+      // file associations
+      if ( pnd_pxml_get_associationitem1_name ( pxmlh ) ) {
+	p -> associationitem1_name = pnd_pxml_get_associationitem1_name ( pxmlh );
+	p -> associationitem1_filetype = pnd_pxml_get_associationitem1_filetype ( pxmlh );
+	p -> associationitem1_parameter = pnd_pxml_get_associationitem1_parameter ( pxmlh );
+      }
+      if ( pnd_pxml_get_associationitem2_name ( pxmlh ) ) {
+	p -> associationitem2_name = pnd_pxml_get_associationitem2_name ( pxmlh );
+	p -> associationitem2_filetype = pnd_pxml_get_associationitem2_filetype ( pxmlh );
+	p -> associationitem2_parameter = pnd_pxml_get_associationitem2_parameter ( pxmlh );
+      }
+      if ( pnd_pxml_get_associationitem3_name ( pxmlh ) ) {
+	p -> associationitem3_name = pnd_pxml_get_associationitem3_name ( pxmlh );
+	p -> associationitem3_filetype = pnd_pxml_get_associationitem3_filetype ( pxmlh );
+	p -> associationitem3_parameter = pnd_pxml_get_associationitem3_parameter ( pxmlh );
+      }
 
       // look for any PXML overrides, if requested
       if ( disco_overrides ) {
