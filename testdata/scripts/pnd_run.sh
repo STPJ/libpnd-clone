@@ -135,7 +135,7 @@ PND_Exec() {
 showHelp() {
 	cat <<endHELP
 Usage:
-  pnd_run.sh -p file.pnd -e cmd [-a args] [-b pndid] [-s path] [-c speed] [-d [path]] [-x] [-m] [-u]
+  pnd_run.sh -p file.pnd -e cmd [-a args] [-b pndid] [-s path] [-c speed] [-d [path]] [-x] [-m] [-u] [-- more_args]
     -p file.pnd	: Specify the pnd file to execute
     -e cmd	: Command to run
     -a args	: Arguments to the command
@@ -146,6 +146,9 @@ Usage:
     -x		: Stop X before starting the apps
     -m		: Only mount the pnd, dont run it (-e become optional)
     -u		: Only umount the pnd, dont run it (-e become optional)
+
+  If '--' is specified, all subsequent arguments are passed through to the command
+  (useful if you want to pass quotes and weird chars to the command)
 endHELP
 }
 
@@ -543,9 +546,9 @@ runApp() {
 	export XDG_CACHE_HOME="$HOME"
 
 	if echo "$EXENAME"|grep -q ^\.\/;then
-		"$EXENAME" $ARGUMENTS
+		"$EXENAME" $ARGUMENTS "$@"
 	else
-		"./$EXENAME" $ARGUMENTS
+		"./$EXENAME" $ARGUMENTS "$@"
 	fi
 	RC=$?
 
@@ -593,9 +596,11 @@ main() {
 			. ${APPDATADIR}/PND_pre_script.sh # Sourcing so it can shared vars with post-script ;)
 			PND_EndTask
 		fi
-		PND_BeginTask "Starting the application ($EXENAME $ARGUMENTS)"
-		runApp
+
+		PND_BeginTask "Starting the application ( $EXENAME $ARGUMENTS "$@")"
+		runApp "$@"
 		PND_EndTask
+
 		if [ -e "${APPDATADIR}/PND_post_script.sh" ]; then
 			PND_BeginTask "Starting user configured post-script"
 			. ${APPDATADIR}/PND_post_script.sh
@@ -630,8 +635,18 @@ main() {
 ######################################################################################
 ####	Parsing the arguments :
 ##
+if [ "$#" -lt 1 ]; then
+	showHelp
+	exit 1
+fi
+
 ACTION=run
 while [ "$#" -gt 0 ];do
+	if [ "$1" == "--" ]; then
+		shift
+		break
+	fi
+
 	if [ "$#" -gt 1 ] && ( [[ "$(echo $2|cut -c 1)" != "-" ]] || [[ "$1" = "-a" ]] );then
         	case "$1" in
                 -p) PND="$2";;
@@ -643,7 +658,6 @@ while [ "$#" -gt 0 ];do
                 -d) APPDATASET=1;APPDATADIR="$2";;
                 -a) ARGUMENTS="$2";;
                 *)	echo "ERROR while parsing arguments: \"$1 $2\" is not a valid argument"; 
-			echo "Arguments were : $PND_ARGS"
 			showHelp;
 			exit 1 ;;
         	esac
@@ -655,7 +669,6 @@ while [ "$#" -gt 0 ];do
                 -x) CLOSE_X=1;;
                 -d) APPDATASET=1;;
                 *)	echo "ERROR while parsing arguments: \"$1\" is not a valid argument"; 
-			echo "Arguments were : $PND_ARGS"
 			showHelp;
 			exit 1 ;;
         	esac
@@ -663,6 +676,12 @@ while [ "$#" -gt 0 ];do
 
 	fi
 done
+
+if test -z "$PND"; then
+	echo "ERROR: pnd file provided (-p)"
+	showHelp
+	exit 1
+fi
 
 # getting the real full path to the file
 PND="$(readlink -f $PND)"
@@ -684,7 +703,7 @@ if [ ! -e "$PND" ]; then #check if theres a pnd suplied, need to clean that up a
 fi
 
 if [ ! "$EXENAME" ] && [[ "$ACTION" = "run" ]]; then
-	echo "ERROR: no executable name provided!"
+	echo "ERROR: no executable name provided! (-e)"
 	showHelp
 	exit 1
 fi
@@ -710,10 +729,10 @@ if [[ "$ACTION" == "run" ]];then
 	PND_Start
 	{
 	if [ $CLOSE_X ]; then
-		main 2>&1 & 
+		main "$@" 2>&1 & 
 		disown
 	else
-		main 2>&1
+		main "$@" 2>&1
 	fi
 	}>>"$PND_LOG"
 	PND_Stop
