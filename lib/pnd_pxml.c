@@ -160,8 +160,11 @@ void pnd_pxml_delete ( pnd_pxml_handle h ) {
   if ( p -> associationitem1_filetype ) {
     free ( p -> associationitem1_filetype );
   }
-  if ( p -> associationitem1_parameter ) {
-    free ( p -> associationitem1_parameter );
+  if ( p -> associationitem1_command ) {
+    free ( p -> associationitem1_command );
+  }
+  if ( p -> associationitem1_args ) {
+    free ( p -> associationitem1_args );
   }
   if ( p -> associationitem2_name ) {
     free ( p -> associationitem2_name );
@@ -169,8 +172,11 @@ void pnd_pxml_delete ( pnd_pxml_handle h ) {
   if ( p -> associationitem2_filetype ) {
     free ( p -> associationitem2_filetype );
   }
-  if ( p -> associationitem2_parameter ) {
-    free ( p -> associationitem2_parameter );
+  if ( p -> associationitem2_command ) {
+    free ( p -> associationitem2_command );
+  }
+  if ( p -> associationitem2_args ) {
+    free ( p -> associationitem2_args );
   }
   if ( p -> associationitem3_name ) {
     free ( p -> associationitem3_name );
@@ -178,8 +184,11 @@ void pnd_pxml_delete ( pnd_pxml_handle h ) {
   if ( p -> associationitem1_filetype ) {
     free ( p -> associationitem3_filetype );
   }
-  if ( p -> associationitem1_parameter ) {
-    free ( p -> associationitem3_parameter );
+  if ( p -> associationitem1_command ) {
+    free ( p -> associationitem3_command );
+  }
+  if ( p -> associationitem1_args ) {
+    free ( p -> associationitem3_args );
   }
   if ( p -> clockspeed ) {
     free ( p -> clockspeed );
@@ -549,9 +558,14 @@ char *pnd_pxml_get_associationitem1_filetype ( pnd_pxml_handle h ) {
   return ( p -> associationitem1_filetype );
 }
 
-char *pnd_pxml_get_associationitem1_parameter ( pnd_pxml_handle h ) {
+char *pnd_pxml_get_associationitem1_command ( pnd_pxml_handle h ) {
   pnd_pxml_t *p = (pnd_pxml_t*) h;
-  return ( p -> associationitem1_parameter );
+  return ( p -> associationitem1_command );
+}
+
+char *pnd_pxml_get_associationitem1_args ( pnd_pxml_handle h ) {
+  pnd_pxml_t *p = (pnd_pxml_t*) h;
+  return ( p -> associationitem1_args );
 }
 
 char *pnd_pxml_get_associationitem2_name ( pnd_pxml_handle h ) {
@@ -564,9 +578,14 @@ char *pnd_pxml_get_associationitem2_filetype ( pnd_pxml_handle h ) {
   return ( p -> associationitem2_filetype );
 }
 
-char *pnd_pxml_get_associationitem2_parameter ( pnd_pxml_handle h ) {
+char *pnd_pxml_get_associationitem2_command ( pnd_pxml_handle h ) {
   pnd_pxml_t *p = (pnd_pxml_t*) h;
-  return ( p -> associationitem2_parameter );
+  return ( p -> associationitem2_command );
+}
+
+char *pnd_pxml_get_associationitem2_args ( pnd_pxml_handle h ) {
+  pnd_pxml_t *p = (pnd_pxml_t*) h;
+  return ( p -> associationitem2_args );
 }
 
 char *pnd_pxml_get_associationitem3_name ( pnd_pxml_handle h ) {
@@ -579,9 +598,14 @@ char *pnd_pxml_get_associationitem3_filetype ( pnd_pxml_handle h ) {
   return ( p -> associationitem3_filetype );
 }
 
-char *pnd_pxml_get_associationitem3_parameter ( pnd_pxml_handle h ) {
+char *pnd_pxml_get_associationitem3_command ( pnd_pxml_handle h ) {
   pnd_pxml_t *p = (pnd_pxml_t*) h;
-  return ( p -> associationitem3_parameter );
+  return ( p -> associationitem3_command );
+}
+
+char *pnd_pxml_get_associationitem3_args ( pnd_pxml_handle h ) {
+  pnd_pxml_t *p = (pnd_pxml_t*) h;
+  return ( p -> associationitem3_args );
 }
 
 char *pnd_pxml_get_clockspeed ( pnd_pxml_handle h ) {

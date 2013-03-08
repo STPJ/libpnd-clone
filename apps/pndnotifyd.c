@@ -754,11 +754,14 @@ void process_discoveries ( pnd_box_handle applist, char *emitdesktoppath, char *
 
     // info .desktop
     if ( g_info_p && info_dotdesktoppath ) {
-      if ( pnd_emit_dotinfo ( info_dotdesktoppath, pndrun, d ) ) {
-	// nada
-      } else {
+      if ( ! pnd_emit_dotinfo ( info_dotdesktoppath, pndrun, d ) ) {
 	pnd_log ( pndn_rem, "ERROR: Error creating info .desktop file for app: %s\n", pnd_box_get_key ( d ) );
       }
+    }
+
+    // file association requests
+    if ( ! pnd_emit_dotassoc ( info_dotdesktoppath, pndrun, d ) ) {
+      pnd_log ( pndn_rem, "ERROR: Error creating file association .desktop file for app: %s\n", pnd_box_get_key ( d ) );
     }
 
     // does this object request any mkdir's?

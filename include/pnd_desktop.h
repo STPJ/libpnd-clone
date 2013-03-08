@@ -24,6 +24,14 @@ pnd_disco_t *pnd_parse_dotdesktop ( char *ddpath, unsigned int flags ); // sets 
 //   extra fields to emit_dotdesktop()'s function and breaking apps, or annoying callers down the road
 unsigned char pnd_emit_dotinfo ( char *targetpath, char *pndrun, pnd_disco_t *p );
 
+// emit_dotassoc() will spit out a .desktop executable entry (more or less similar to the emit_dotdesktop above)
+// however in this variation the executable line is set up for invokation of a file association instead of the
+// normal executable line.
+// - lame code is a copy from emit_dotdesktop() .. I really need to clean this up and paramterize a subfunction..
+// - this function will emit all file association .desktops (not just one of them)
+unsigned char pnd_emit_dotassoc ( char *targetpath, char *pndrun, pnd_disco_t *p );
+unsigned char _pnd_emit_dotassoc ( char *targetpath, char *pndrun, pnd_disco_t *p, unsigned char i ); // will only emit the requested assoc 1, 2, 3
+
 // emit_icon() will attempt to copy the icon from a PXML directory, or from a pnd file if appended,
 // to the given directory; returns 1 on sucess, otherwise is a fail.
 unsigned char pnd_emit_icon ( char *targetpath, pnd_disco_t *p );

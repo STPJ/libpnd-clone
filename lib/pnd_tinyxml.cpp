@@ -416,55 +416,57 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
     if ( (pElem = hRoot.FirstChild(PND_PXML_NODENAME_ASSOCS).Element()) )
     {
       i = 0;
+
       //Go through all associations. i serves as index; since the format only supports 3 associations we need to keep track of the number.
       for (pElem = pElem->FirstChildElement(PND_PXML_ENAME_ASSOC); pElem && i < 3;
 	   pElem = pElem->NextSiblingElement(PND_PXML_ENAME_ASSOC), i++)
       {
 	char *name = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCNAME);
 	char *filetype = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCFTYPE);
-	//char *paramter = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCARGS);
+	char *command = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCCMD);
+	char *args = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCARGS);
 
-	//pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML - parse (%p %p)\n", name, filetype/*, paramter */ );
+	if  ( ! ( name && filetype && command ) ) {
+	  if ( name )     free(name);
+	  if ( filetype ) free(filetype);
+	  if ( command )  free(command);
+	  if ( args )     free(args);
+	  continue;
+	}
 
-	if (!(name && filetype /* && paramter*/ ))
-       {
-         if(name)     free(name);
-         if(filetype) free(filetype);
-         //if(paramter) free(paramter);
-         continue;
-       }
+	switch ( i ) { //TODO: same problem here: only 3 associations supported
+	  case 0: {
+	    app->associationitem1_name      = strdup ( name );
+	    app->associationitem1_filetype  = strdup ( filetype );
+	    app->associationitem1_command   = strdup ( command );
+	    app->associationitem1_args      = strdup ( args );
+	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-0)\n", i );
+	    break;
+	  }
+	  case 1: {
+	    app->associationitem2_name      = strdup ( name );
+	    app->associationitem2_filetype  = strdup ( filetype );
+	    app->associationitem2_command   = strdup ( command );
+	    app->associationitem2_args      = strdup ( args );
+	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-1)\n", i );
+	    break;
+	  }
+	  case 2: {
+	    app->associationitem3_name      = strdup ( name );
+	    app->associationitem3_filetype  = strdup ( filetype );
+	    app->associationitem3_command   = strdup ( command );
+	    app->associationitem3_args      = strdup ( args );
+	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-2)\n", i );
+	  } // case
+	} // switch
 
-	switch(i) //TODO: same problem here: only 3 associations supported
-	{
-	case 0:
-	{
-	  app->associationitem1_name      = strdup ( name );
-	  app->associationitem1_filetype  = strdup ( filetype );
-	  //app->associationitem1_parameter = paramter;
-	  pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML (%d-0)\n", i );
-	  break;
-	}
-	case 1:
-	{
-	  app->associationitem2_name      = strdup ( name );
-	  app->associationitem2_filetype  = strdup ( filetype );
-	  //app->associationitem2_parameter = paramter;
-	  pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML (%d-1)\n", i );
-	  break;
-	}
-	case 2:
-	{
-	  app->associationitem3_name      = strdup ( name );
-	  app->associationitem3_filetype  = strdup ( filetype );
-	  //app->associationitem3_parameter = paramter;
-	  pnd_log ( PND_LOG_DEFAULT, "  Found file association request in PXML (%d-2)\n", i );
-	}
-	}
-       if(name)     free(name);
-       if(filetype) free(filetype);
-       //if(paramter) free(paramter);
-      }
-    }
+	if ( name )     free(name);
+	if ( filetype ) free(filetype);
+	if ( command )  free(command);
+	if ( args )     free(args);
+
+      } // for
+    } // assoc
 #endif
 
     //Performance related things (aka: Clockspeed XD):

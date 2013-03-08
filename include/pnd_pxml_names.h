@@ -80,13 +80,14 @@ extern "C" {
 #define PND_PXML_ATTRNAME_SUBCATNAME "name"
 
 /* <associations>
- *   <association name="CSS File" filetype="text/css" exec="-f %s -t css" />
+ *   <association name="CSS File" filetype="text/css" command="./blah.sh" arguments="-f %s -t css" />
  * </associations>
  */
 #define PND_PXML_NODENAME_ASSOCS "associations"
 #define PND_PXML_ENAME_ASSOC "association"
 #define PND_PXML_ATTRNAME_ASSOCNAME "name"
 #define PND_PXML_ATTRNAME_ASSOCFTYPE "filetype"
+#define PND_PXML_ATTRNAME_ASSOCCMD "command"
 #define PND_PXML_ATTRNAME_ASSOCARGS "arguments"
 
 /* <clockspeed frequency="600" /> */

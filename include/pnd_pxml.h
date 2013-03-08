@@ -82,13 +82,16 @@ char *pnd_pxml_get_osversion_release ( pnd_pxml_handle h );
 char *pnd_pxml_get_osversion_build ( pnd_pxml_handle h );
 char *pnd_pxml_get_associationitem1_name ( pnd_pxml_handle h );
 char *pnd_pxml_get_associationitem1_filetype ( pnd_pxml_handle h );
-char *pnd_pxml_get_associationitem1_parameter ( pnd_pxml_handle h );
+char *pnd_pxml_get_associationitem1_command ( pnd_pxml_handle h );
+char *pnd_pxml_get_associationitem1_args ( pnd_pxml_handle h );
 char *pnd_pxml_get_associationitem2_name ( pnd_pxml_handle h );
 char *pnd_pxml_get_associationitem2_filetype ( pnd_pxml_handle h );
-char *pnd_pxml_get_associationitem2_parameter ( pnd_pxml_handle h );
+char *pnd_pxml_get_associationitem2_command ( pnd_pxml_handle h );
+char *pnd_pxml_get_associationitem2_args ( pnd_pxml_handle h );
 char *pnd_pxml_get_associationitem3_name ( pnd_pxml_handle h );
 char *pnd_pxml_get_associationitem3_filetype ( pnd_pxml_handle h );
-char *pnd_pxml_get_associationitem3_parameter ( pnd_pxml_handle h );
+char *pnd_pxml_get_associationitem3_command ( pnd_pxml_handle h );
+char *pnd_pxml_get_associationitem3_args ( pnd_pxml_handle h );
 char *pnd_pxml_get_clockspeed ( pnd_pxml_handle h );
 char *pnd_pxml_get_background ( pnd_pxml_handle h );
 char *pnd_pxml_get_startdir ( pnd_pxml_handle h );
@@ -157,13 +160,13 @@ typedef struct
 	char *osversion_build;
 	char *associationitem1_name;
 	char *associationitem1_filetype;
-	char *associationitem1_parameter;
+	char *associationitem1_command;
 	char *associationitem2_name;
 	char *associationitem2_filetype;
-	char *associationitem2_parameter;
+	char *associationitem2_command;
 	char *associationitem3_name;
 	char *associationitem3_filetype;
-	char *associationitem3_parameter;
+	char *associationitem3_command;
 	char *clockspeed;
 	char *background;
 	char *startdir;
@@ -180,6 +183,9 @@ typedef struct
         char *package_version_minor;
         char *package_version_release;
         char *package_version_build;
+        char *associationitem1_args; // wish it could be above, but that would break existing ABI
+        char *associationitem2_args; // wish it could be above, but that would break existing ABI
+        char *associationitem3_args; // wish it could be above, but that would break existing ABI
 
 }  pnd_pxml_t;
 

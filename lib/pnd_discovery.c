@@ -63,10 +63,16 @@ void pnd_disco_destroy ( pnd_disco_t *p ) {
   if ( p -> package_version_build ) { free ( p -> package_version_build ); }
   if ( p -> associationitem1_name ) { free ( p -> associationitem1_name ); }
   if ( p -> associationitem1_filetype ) { free ( p -> associationitem1_filetype ); }
+  if ( p -> associationitem1_command ) { free ( p -> associationitem1_command ); }
+  if ( p -> associationitem1_args ) { free ( p -> associationitem1_args ); }
   if ( p -> associationitem2_name ) { free ( p -> associationitem2_name ); }
   if ( p -> associationitem2_filetype ) { free ( p -> associationitem2_filetype ); }
+  if ( p -> associationitem2_command ) { free ( p -> associationitem2_command ); }
+  if ( p -> associationitem2_args ) { free ( p -> associationitem2_args ); }
   if ( p -> associationitem3_name ) { free ( p -> associationitem3_name ); }
   if ( p -> associationitem3_filetype ) { free ( p -> associationitem3_filetype ); }
+  if ( p -> associationitem3_command ) { free ( p -> associationitem3_command ); }
+  if ( p -> associationitem3_args ) { free ( p -> associationitem3_args ); }
 
   return;
 }
@@ -347,18 +353,21 @@ static int pnd_disco_callback ( const char *fpath, const struct stat *sb,
       if ( pnd_pxml_get_associationitem1_name ( pxmlh ) ) {
 	p -> associationitem1_name = strdup ( pnd_pxml_get_associationitem1_name ( pxmlh ) );
 	p -> associationitem1_filetype = strdup ( pnd_pxml_get_associationitem1_filetype ( pxmlh ) );
-	//p -> associationitem1_parameter = strdup ( pnd_pxml_get_associationitem1_parameter ( pxmlh ) );
-	pnd_log ( PND_LOG_DEFAULT, "  Disco: Found file association request in PXML (%s)\n", p -> title_en );
+	p -> associationitem1_command = strdup ( pnd_pxml_get_associationitem1_command ( pxmlh ) );
+	p -> associationitem1_args = strdup ( pnd_pxml_get_associationitem1_args ( pxmlh ) );
+	//pnd_log ( PND_LOG_DEFAULT, "  Disco: Found file association request in PXML (%s)\n", p -> title_en );
       }
       if ( pnd_pxml_get_associationitem2_name ( pxmlh ) ) {
 	p -> associationitem2_name = strdup ( pnd_pxml_get_associationitem2_name ( pxmlh ) );
 	p -> associationitem2_filetype = strdup ( pnd_pxml_get_associationitem2_filetype ( pxmlh ) );
-	//p -> associationitem2_parameter = strdup ( pnd_pxml_get_associationitem2_parameter ( pxmlh ) );
+	p -> associationitem2_command = strdup ( pnd_pxml_get_associationitem2_command ( pxmlh ) );
+	p -> associationitem2_args = strdup ( pnd_pxml_get_associationitem2_args ( pxmlh ) );
       }
       if ( pnd_pxml_get_associationitem3_name ( pxmlh ) ) {
 	p -> associationitem3_name = strdup ( pnd_pxml_get_associationitem3_name ( pxmlh ) );
 	p -> associationitem3_filetype = strdup ( pnd_pxml_get_associationitem3_filetype ( pxmlh ) );
-	//p -> associationitem3_parameter = strdup ( pnd_pxml_get_associationitem3_parameter ( pxmlh ) );
+	p -> associationitem3_command = strdup ( pnd_pxml_get_associationitem3_command ( pxmlh ) );
+	p -> associationitem3_args = strdup ( pnd_pxml_get_associationitem3_args ( pxmlh ) );
       }
 #endif
 
