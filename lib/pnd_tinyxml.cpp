@@ -439,7 +439,9 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
 	    app->associationitem1_name      = strdup ( name );
 	    app->associationitem1_filetype  = strdup ( filetype );
 	    app->associationitem1_command   = strdup ( command );
-	    app->associationitem1_args      = strdup ( args );
+	    if ( args ) {
+	      app->associationitem1_args      = strdup ( args );
+	    }
 	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-0)\n", i );
 	    break;
 	  }
@@ -447,7 +449,9 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
 	    app->associationitem2_name      = strdup ( name );
 	    app->associationitem2_filetype  = strdup ( filetype );
 	    app->associationitem2_command   = strdup ( command );
-	    app->associationitem2_args      = strdup ( args );
+	    if ( args ) {
+	      app->associationitem2_args      = strdup ( args );
+	    }
 	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-1)\n", i );
 	    break;
 	  }
@@ -455,7 +459,9 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
 	    app->associationitem3_name      = strdup ( name );
 	    app->associationitem3_filetype  = strdup ( filetype );
 	    app->associationitem3_command   = strdup ( command );
-	    app->associationitem3_args      = strdup ( args );
+	    if ( args ) {
+	      app->associationitem3_args      = strdup ( args );
+	    }
 	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-2)\n", i );
 	  } // case
 	} // switch
