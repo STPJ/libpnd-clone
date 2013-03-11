@@ -16,7 +16,7 @@
 
 unsigned char pnd_emit_dotdesktop ( char *targetpath, char *pndrun, pnd_disco_t *p ) {
   char filename [ FILENAME_MAX ];
-  char buffer [ 1024 ];
+  char buffer [ 4096 ];
   FILE *f;
 
   // specification
@@ -131,6 +131,11 @@ unsigned char pnd_emit_dotdesktop ( char *targetpath, char *pndrun, pnd_disco_t 
   }
 #endif
 
+  // association requests
+  if ( p -> associationitem1_filetype ) {
+    fprintf ( f, "MimeType=%s\n", p -> associationitem1_filetype );
+  }
+
   if ( p -> exec ) {
     char *nohup;
 
@@ -157,7 +162,7 @@ unsigned char pnd_emit_dotdesktop ( char *targetpath, char *pndrun, pnd_disco_t 
       strncat ( buffer, p -> startdir, 1020 );
     }
 
-    // args
+    // args (regular args, for pnd_run.sh to handle)
     if ( p -> execargs ) {
       char argbuf [ 1024 ];
       snprintf ( argbuf, 1000, " -a \"%s\"", p -> execargs );
@@ -173,6 +178,13 @@ unsigned char pnd_emit_dotdesktop ( char *targetpath, char *pndrun, pnd_disco_t 
     // exec options
     if ( pnd_pxml_get_x11 ( p -> option_no_x11 ) == pnd_pxml_x11_stop ) {
       strncat ( buffer, " -x ", 1020 );
+    }
+
+    // args (dashdash -- args, that the shell can screw with before pnd_run.sh gets them)
+    if ( p -> exec_dashdash_args ) {
+      char argbuf [ 4096 ];
+      snprintf ( argbuf, 4096, " -- %s", p -> exec_dashdash_args );
+      strncat ( buffer, argbuf, 4096 );
     }
 
     // newline
@@ -389,214 +401,6 @@ unsigned char pnd_emit_dotinfo ( char *targetpath, char *pndrun, pnd_disco_t *p 
 
   return ( 1 );
 }
-
-unsigned char pnd_emit_dotassoc ( char *targetpath, char *pndrun, pnd_disco_t *p ) {
-
-  if ( p -> associationitem1_command ) {
-    if ( ! _pnd_emit_dotassoc ( targetpath, pndrun, p, 1 ) ) {
-      return ( 0 );
-    }
-  }
-
-  if ( p -> associationitem2_command ) {
-    if ( ! _pnd_emit_dotassoc ( targetpath, pndrun, p, 2 ) ) {
-      return ( 0 );
-    }
-  }
-
-  if ( p -> associationitem3_command ) {
-    if ( ! _pnd_emit_dotassoc ( targetpath, pndrun, p, 3 ) ) {
-      return ( 0 );
-    }
-  }
-
-  return ( 1 );
-}
-
-unsigned char _pnd_emit_dotassoc ( char *targetpath, char *pndrun, pnd_disco_t *p, unsigned char i ) {
-  char filename [ FILENAME_MAX ];
-  char buffer [ 1024 ];
-  FILE *f;
-
-  char *command;
-  char *args;
-  char *filetype;
-  char *mimename;
-
-  if ( i == 1 ) {
-    command = p -> associationitem1_command;
-    args = p -> associationitem1_args;
-    filetype = p -> associationitem1_filetype;
-    mimename = p -> associationitem1_name;
-  } else if ( i == 2 ) {
-    command = p -> associationitem2_command;
-    args = p -> associationitem2_args;
-    filetype = p -> associationitem2_filetype;
-    mimename = p -> associationitem2_name;
-  } else if ( i == 3 ) {
-    command = p -> associationitem3_command;
-    args = p -> associationitem3_args;
-    filetype = p -> associationitem3_filetype;
-    mimename = p -> associationitem3_name;
-  } else {
-    return ( 0 ); // w-t-f
-  }
-
-  // specification
-  // http://standards.freedesktop.org/desktop-entry-spec
-
-  // validation
-
-  if ( ! p -> unique_id ) {
-    pnd_log ( PND_LOG_DEFAULT, "Can't emit dotdesktop for %s, missing unique-id\n", targetpath );
-    return ( 0 );
-  }
-
-  if ( ! command ) {
-    pnd_log ( PND_LOG_DEFAULT, "Can't emit dotdesktop for %s, missing exec\n", targetpath );
-    return ( 0 );
-  }
-
-  if ( ! filetype ) {
-    pnd_log ( PND_LOG_DEFAULT, "Can't emit dotdesktop for %s, missing MIME-type\n", targetpath );
-    return ( 0 );
-  }
-
-  if ( ! targetpath ) {
-    pnd_log ( PND_LOG_DEFAULT, "Can't emit dotdesktop for %s, missing target path\n", targetpath );
-    return ( 0 );
-  }
-
-  if ( ! pndrun ) {
-    pnd_log ( PND_LOG_DEFAULT, "Can't emit dotdesktop for %s, missing pnd_run.sh\n", targetpath );
-    return ( 0 );
-  }
-
-  // set up
-
-  sprintf ( filename, "%s/%s#%u#%u.desktop", targetpath, p -> unique_id, p -> subapp_number, i );
-
-  // emit
-
-  //printf ( "EMIT DOTDESKTOP '%s'\n", filename );
-
-  f = fopen ( filename, "w" );
-
-  if ( ! f ) {
-    return ( 0 );
-  }
-
-  fprintf ( f, "%s\n", PND_DOTDESKTOP_HEADER );
-
-  fprintf ( f, "NoDisplay=false\n" ); // file association entries shouldn't live in the menus; but if 'true', xfce won't show this association in the dialog.. stupid!
-
-  if ( p -> title_en ) {
-    snprintf ( buffer, 1020, "Name=%s\n", mimename );
-    fprintf ( f, "%s", buffer );
-  }
-
-  fprintf ( f, "Type=Application\n" );
-  fprintf ( f, "Version=1.0\n" );
-
-  if ( p -> icon ) {
-    snprintf ( buffer, 1020, "Icon=%s\n", p -> icon );
-    fprintf ( f, "%s", buffer );
-  }
-
-  if ( p -> unique_id ) {
-    fprintf ( f, "X-Pandora-UID=%s\n", p -> unique_id );
-  }
-
-  if ( p -> clockspeed ) {
-    fprintf ( f, "X-Pandora-Clockspeed=%s\n", p -> clockspeed );
-  }
-
-  if ( p -> startdir ) {
-    fprintf ( f, "X-Pandora-Startdir=%s\n", p -> startdir );
-  }
-
-  if ( filetype ) {
-    pnd_log ( PND_LOG_DEFAULT, "  EmitDesktopAssoc: Found file association request in PXML (%s) for mimetype (%s)\n", p -> title_en, filetype );
-    fprintf ( f, "MimeType=%s\n", filetype );
-  }
-
-  if ( command ) {
-    char *nohup;
-
-    if ( p -> option_no_x11 ) {
-      nohup = "/usr/bin/nohup ";
-    } else {
-      nohup = "";
-    }
-
-    // basics
-    if ( p -> object_type == pnd_object_type_directory ) {
-      snprintf ( buffer, 1020, "Exec=%s%s -p \"%s\" -e \"%s\" -b \"%s\"",
-		 nohup, pndrun, p -> object_path, command,
-		 p -> appdata_dirname ? p -> appdata_dirname : p -> unique_id );
-    } else if ( p -> object_type == pnd_object_type_pnd ) {
-      snprintf ( buffer, 1020, "Exec=%s%s -p \"%s/%s\" -e \"%s\" -b \"%s\"",
-		 nohup, pndrun, p -> object_path, p -> object_filename, command,
-		 p -> appdata_dirname ? p -> appdata_dirname : p -> unique_id );
-    }
-
-    // start dir
-    if ( p -> startdir ) {
-      strncat ( buffer, " -s ", 1020 );
-      strncat ( buffer, p -> startdir, 1020 );
-    }
-
-    // args (pxml args)
-    if ( p -> execargs ) {
-      char argbuf [ 1024 ];
-      snprintf ( argbuf, 1000, " -a \"%s\"", p -> execargs );
-      strncat ( buffer, argbuf, 1020 );
-    }
-
-    // clockspeed
-    if ( p -> clockspeed && atoi ( p -> clockspeed ) != 0 ) {
-      strncat ( buffer, " -c ", 1020 );
-      strncat ( buffer, p -> clockspeed, 1020 );
-    }
-
-    // exec options
-    if ( pnd_pxml_get_x11 ( p -> option_no_x11 ) == pnd_pxml_x11_stop ) {
-      strncat ( buffer, " -x ", 1020 );
-    }
-
-    // args (mimetype args)
-    if ( args ) {
-      char argbuf [ 1024 ];
-      snprintf ( argbuf, 1000, " -- %s", args );
-      strncat ( buffer, argbuf, 1020 );
-    }
-
-    // newline
-    strncat ( buffer, "\n", 1020 );
-
-    // emit
-    fprintf ( f, "%s", buffer );
-
-    // and lets copy in some stuff in case it makes .desktop consumers life easier
-    if ( command ) { fprintf ( f, "X-Pandora-Exec=%s\n", command ); }
-    if ( args ) { fprintf ( f, "X-Pandora-ExecArgs=%s\n", args ); }
-    if ( p -> appdata_dirname ) { fprintf ( f, "X-Pandora-Appdata-Dirname=%s\n", p -> appdata_dirname ); }
-    if ( p -> object_flags & PND_DISCO_FLAG_OVR ) { fprintf ( f, "X-Pandora-Object-Flag-OVR=%s\n", "Yes" ); }
-    if ( p -> object_type == pnd_object_type_pnd ) {
-      fprintf ( f, "X-Pandora-Object-Path=%s\n", p -> object_path );
-      fprintf ( f, "X-Pandora-Object-Filename=%s\n", p -> object_filename );
-    }
-
-  }
-
-  fprintf ( f, "Categories=Other\n" ); // NoDisplay means can't confirm choice in xfce, so how do we hide this out of the way?
-
-  fprintf ( f, "%s\n", PND_DOTDESKTOP_SOURCE ); // should we need to know 'who' created the file during trimming
-
-  fclose ( f );
-
-  return ( 1 );
-} // dotassoc
 
 unsigned char pnd_emit_icon ( char *targetpath, pnd_disco_t *p ) {
   //#define BITLEN (8*1024)

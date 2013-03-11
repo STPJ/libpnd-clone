@@ -301,8 +301,9 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
        app->standalone = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_EXECSTAL);
        app->exec       = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_EXECCMD);
        app->startdir   = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_EXECWD);
-       app->exec_no_x11     = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_EXECNOX11);
+       app->exec_no_x11         = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_EXECNOX11);
        app->execargs   = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_EXECARGS);
+       app->exec_dashdash_args  = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_DASHDASH);
      }
 
     //The app icon:
@@ -417,59 +418,42 @@ unsigned char pnd_pxml_parse ( const char *pFilename, char *buffer, unsigned int
     {
       i = 0;
 
-      //Go through all associations. i serves as index; since the format only supports 3 associations we need to keep track of the number.
-      for (pElem = pElem->FirstChildElement(PND_PXML_ENAME_ASSOC); pElem && i < 3;
+      for (pElem = pElem->FirstChildElement(PND_PXML_ENAME_ASSOC); pElem && i < 50;
 	   pElem = pElem->NextSiblingElement(PND_PXML_ENAME_ASSOC), i++)
       {
 	char *name = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCNAME);
 	char *filetype = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCFTYPE);
-	char *command = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCCMD);
-	char *args = pnd_pxml_get_attribute(pElem, PND_PXML_ATTRNAME_ASSOCARGS);
+	unsigned int maxlen;
 
-	if  ( ! ( name && filetype && command ) ) {
+	if  ( ! ( name && filetype ) ) {
 	  if ( name )     free(name);
 	  if ( filetype ) free(filetype);
-	  if ( command )  free(command);
-	  if ( args )     free(args);
 	  continue;
 	}
 
-	switch ( i ) { //TODO: same problem here: only 3 associations supported
-	  case 0: {
-	    app->associationitem1_name      = strdup ( name );
-	    app->associationitem1_filetype  = strdup ( filetype );
-	    app->associationitem1_command   = strdup ( command );
-	    if ( args ) {
-	      app->associationitem1_args      = strdup ( args );
-	    }
-	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-0)\n", i );
-	    break;
-	  }
-	  case 1: {
-	    app->associationitem2_name      = strdup ( name );
-	    app->associationitem2_filetype  = strdup ( filetype );
-	    app->associationitem2_command   = strdup ( command );
-	    if ( args ) {
-	      app->associationitem2_args      = strdup ( args );
-	    }
-	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-1)\n", i );
-	    break;
-	  }
-	  case 2: {
-	    app->associationitem3_name      = strdup ( name );
-	    app->associationitem3_filetype  = strdup ( filetype );
-	    app->associationitem3_command   = strdup ( command );
-	    if ( args ) {
-	      app->associationitem3_args      = strdup ( args );
-	    }
-	    //pnd_log ( PND_LOG_DEFAULT, (char*)"  Found file association request in PXML (%d-2)\n", i );
-	  } // case
-	} // switch
+	if ( app -> associationitem1_name == NULL ) {
+	  // first hit, just dupe
+	  app -> associationitem1_name      = strdup ( name );
+	  app -> associationitem1_filetype  = strdup ( filetype );
+	  pnd_log ( PND_LOG_DEFAULT, (char*)"  File assoc initial: %s -> %s\n", name, filetype );
+	} else {
+	  // grow-append buffer
+
+	  maxlen = strlen ( app -> associationitem1_name ) + strlen ( name ) + 3;
+	  app -> associationitem1_name = (char*) realloc ( app -> associationitem1_name, maxlen );
+	  strncat ( app -> associationitem1_name, "; ", maxlen );
+	  strncat ( app -> associationitem1_name, name, maxlen );
+
+	  maxlen = strlen ( app -> associationitem1_filetype ) + strlen ( filetype ) + 3;
+	  app -> associationitem1_filetype = (char*) realloc ( app -> associationitem1_filetype, maxlen );
+	  strncat ( app -> associationitem1_filetype, "; ", maxlen );
+	  strncat ( app -> associationitem1_filetype, filetype, maxlen );
+
+	  pnd_log ( PND_LOG_DEFAULT, (char*)"  File assoc growpend: %s -> %s\n", name, filetype );
+	}
 
 	if ( name )     free(name);
 	if ( filetype ) free(filetype);
-	if ( command )  free(command);
-	if ( args )     free(args);
 
       } // for
     } // assoc

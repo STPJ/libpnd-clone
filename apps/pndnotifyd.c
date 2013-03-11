@@ -759,11 +759,6 @@ void process_discoveries ( pnd_box_handle applist, char *emitdesktoppath, char *
       }
     }
 
-    // file association requests
-    if ( ! pnd_emit_dotassoc ( info_dotdesktoppath, pndrun, d ) ) {
-      pnd_log ( pndn_rem, "ERROR: Error creating file association .desktop file for app: %s\n", pnd_box_get_key ( d ) );
-    }
-
     // does this object request any mkdir's?
     if ( d -> mkdir_sp ) {
 
