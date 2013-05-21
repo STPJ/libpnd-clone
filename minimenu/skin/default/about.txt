@@ -2,12 +2,12 @@ Thanks to our patient wives and kids!
 
 minimenu is for DaveC!
 
+Minimenu : Skeezix
 Artwork/UI design : DaveC
-Minimenu/bugs : Skeezix
+Testing/refinement : porg
 
 Greets out to..
 EvilDragon
-Craigix
 mfk
 MWeston
 
@@ -16,11 +16,9 @@ and to the unsung heroes ;)
 DJWillis
 notaz
 vimacs
-skeezix
 cpasjuste
 pickle
 squidge
-DaveC
 
 mr spiv
 rlyeh
