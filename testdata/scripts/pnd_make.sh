@@ -283,9 +283,9 @@ then
 	fi
 	if [ $SQUASHXZ ];
 	then
-		mksquashfs $FOLDER $PNDNAME.iso -comp xz -Xbcj arm,armthumb
+		mksquashfs $FOLDER $PNDNAME.iso -all-root -force-gid 0 -comp xz -Xbcj arm,armthumb
 	else
-		mksquashfs $FOLDER $PNDNAME.iso
+		mksquashfs $FOLDER $PNDNAME.iso -all-root -force-gid 0
 	fi
 else
 	check_for_tool mkisofs
