@@ -532,8 +532,10 @@ int pnd_map_dotdesktop_categories ( pnd_conf_handle c, char *target_buffer, unsi
   #define MAPCAT(field)				            \
     if ( ( t = d -> field ) ) {                             \
       match = pnd_map_dotdesktop_category ( c, t );         \
-      strncat ( target_buffer, match ? match : t, len );    \
-      strncat ( target_buffer, ";", len );                  \
+      if ( ( !match ) || ( strcasecmp ( match, "NoCategory" ) ) ) {	\
+	strncat ( target_buffer, match ? match : t, len );  \
+	strncat ( target_buffer, ";", len );		    \
+      }                                                     \
     }
 
   MAPCAT(main_category);

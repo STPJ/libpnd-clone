@@ -420,6 +420,7 @@ static int pnd_disco_callback ( const char *fpath, const struct stat *sb,
 	  if ( p -> main_category ) {
 	    free ( p -> main_category );
 	  }
+	  // the override file cannot suppress the main category
 	  p -> main_category = strdup ( v );
 	}
 	snprintf ( key, 100, "Application-%u.maincategorysub1", p -> subapp_number );
@@ -430,6 +431,48 @@ static int pnd_disco_callback ( const char *fpath, const struct stat *sb,
 	  }
 	  if ( strcasecmp ( v, "NoSubcategory" ) != 0 ) {
 	    p -> main_category1 = strdup ( v );
+	  }
+	}
+	snprintf ( key, 100, "Application-%u.maincategorysub2", p -> subapp_number );
+	if ( ( v = pnd_conf_get_as_char ( ovrh, key ) ) ) {
+	  if ( p -> main_category2 ) {
+	    free ( p -> main_category2 );
+	    p -> main_category2 = NULL;
+	  }
+	  if ( strcasecmp ( v, "NoSubcategory" ) != 0 ) {
+	    p -> main_category2 = strdup ( v );
+	  }
+	}
+	// alt categories
+	snprintf ( key, 100, "Application-%u.altcategory", p -> subapp_number );
+	if ( ( v = pnd_conf_get_as_char ( ovrh, key ) ) ) {
+	  if ( p -> alt_category ) {
+	    free ( p -> alt_category );
+	    p -> alt_category = NULL;
+	  }
+	  // but it makes sense to allow full suppression of the alternate category
+	  if ( strcasecmp ( v, "NoCategory" ) != 0 ) {
+	    p -> alt_category = strdup ( v );
+          }
+	}
+	snprintf ( key, 100, "Application-%u.altcategorysub1", p -> subapp_number );
+	if ( ( v = pnd_conf_get_as_char ( ovrh, key ) ) ) {
+	  if ( p -> alt_category1 ) {
+	    free ( p -> alt_category1 );
+	    p -> alt_category1 = NULL;
+	  }
+	  if ( strcasecmp ( v, "NoSubcategory" ) != 0 ) {
+	    p -> alt_category1 = strdup ( v );
+	  }
+	}
+	snprintf ( key, 100, "Application-%u.altcategorysub2", p -> subapp_number );
+	if ( ( v = pnd_conf_get_as_char ( ovrh, key ) ) ) {
+	  if ( p -> alt_category2 ) {
+	    free ( p -> alt_category2 );
+	    p -> alt_category2 = NULL;
+	  }
+	  if ( strcasecmp ( v, "NoSubcategory" ) != 0 ) {
+	    p -> alt_category2 = strdup ( v );
 	  }
 	}
 
